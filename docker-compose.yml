@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  python_app:
+    build:
+      context: .
+      dockerfile: app.dockerfile
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: mydatabase
+      DB_USER: user
+      DB_PASSWORD: password
+    depends_on:
+      - db
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx.dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - python_app
+
+  db:
+    build:
+      context: .
+      dockerfile: db.dockerfile
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
